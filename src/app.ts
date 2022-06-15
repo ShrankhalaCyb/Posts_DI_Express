@@ -1,9 +1,12 @@
+import PostController from "./resources/post/post.controller";
 
 import express, { Application } from "express";
 import mongoose from "mongoose";
 import cors from "cors";
 import errorMiddleware from "./middleware/error.middleware";
 import Controller from "./utils/interfaces/controller.interface";
+import PostService from "./resources/post/post.service";
+import Container from "typedi";
 
 
 
@@ -11,14 +14,14 @@ import Controller from "./utils/interfaces/controller.interface";
 class App {
 
     public express: Application;
-    public port: number = 5001
-
-    constructor(port: number,controllers:Controller[]) {
+    public port: number 
+    private postController = Container.get(PostController)
+    constructor(port: number) {
         this.express = express()
         this.port = port
         this.initialiseDBConnection()
         this.initialiseMiddleware()
-        this.initialiseControllers(controllers)
+        this.initialiseControllers()
         this.initialiseErrorHandlingMiddleware()
     }
 
@@ -38,10 +41,13 @@ class App {
     /**
      * initialiseControllers
      */
-    public initialiseControllers(controllers:Controller[]):void {
-       controllers.forEach((c:Controller) => {
-        this.express.use('/api',c.router)
-       })
+    public initialiseControllers():void {
+    //    controllers.forEach((c:Controller) => {
+    //     this.express.use('/api',c.router)
+    //    })
+    console.log("inside initialise controllers")
+        this.express.use('/api',this.postController.router)
+
     }
 
     /* 

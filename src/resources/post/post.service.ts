@@ -1,11 +1,17 @@
+import { Service } from "typedi"
 import Post from "./post.interface"
 import PostModel from "./post.model"
 
-
+@Service()
 class PostService {
 
     private post = PostModel
+    constructor() {
+        console.log("inside service constructor")
+        
 
+        // this.postServiceObj = postService    
+    }
 
     public async createPost(body: { title: string, description: string }):Promise<Post> {
 

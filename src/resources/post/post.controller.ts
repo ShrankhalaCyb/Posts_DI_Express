@@ -2,22 +2,26 @@ import Controller from "../../utils/interfaces/controller.interface";
 import { NextFunction, Request, Response, Router } from "express";
 import PostService from "./post.service";
 import HttpException from "../../utils/exceptions/http.exception";
+import Container, { Inject, Service } from "typedi";
 
 // contains biz logic
 
 //  const postServiceObj = new PostService()
 
+@Service()
 class PostController  implements Controller{
 
     public path = '/posts'
     public router = Router()
-private postServiceObj:PostService
+    // @Inject()
+    private postServiceObj :PostService
     
-    constructor(  postService:PostService) {
-        
+    constructor(postService: PostService ) {
+        // postService:PostService
+        console.log("inside controller constructor")
         this.initialRoutes()
-         
-        this.postServiceObj = postService
+         this.postServiceObj=postService
+        // this.postServiceObj = new PostService()
     }
 
     private initialRoutes():void {
@@ -46,18 +50,37 @@ private postServiceObj:PostService
 
     }
 
-    private async readPost(req: Request, res: Response){
+     private async readPost(req: Request, res: Response){
         // this.postService = new PostService()
+
+        console.log("inside controller")
             try {
             //   this.postService= new PostService()
                 // const posts = await postService.readPost()
-                const posts = await this.postServiceObj.readPost()
+                const ps= Container.get(PostService)
+                const posts = await ps.readPost()
                 res.status(201).send(posts)
             } catch (error:any) {
                 res.status(400).send(error)
                 console.log(error)
             }
-    }
+    } 
+
+   /*  private async readPost2(req: Request, res: Response) {
+        // this.postService = new PostService()
+
+        console.log("inside controller")
+        try {
+            //   this.postService= new PostService()
+            // const posts = await postService.readPost()
+            // const ps = Container.get(PostService)
+            const posts = await this.postServiceObj.readPost()
+            res.status(201).send(posts)
+        } catch (error: any) {
+            res.status(400).send(error)
+            console.log(error)
+        }
+    } */
 
     private async updatePost(req: Request, res: Response,next:NextFunction) {
 
